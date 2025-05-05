@@ -24,9 +24,15 @@ class subjectSeeder extends Seeder
             "user_id" => 1,
             ],
             [
-            "name"=> "FIS 1100",
-            "paralelo" => "C",
-            "user_id"=> 2,
+                "name"=> "FIS 1102",
+                "paralelo" => "C",
+                "user_id"=> 1,
+            ],
+            
+            [
+                "name"=> "FIS 1200",
+                "paralelo" => "C",
+                "user_id"=> 1,
             ],
         ]);
     }

@@ -21,3 +21,6 @@ $router->get('/', function () use ($router) {
 $router->post('/login', 'UserController@login');
 $router->get('/docente/materias', 'UserController@materias');
 $router->get('/docente/materia', 'UserController@materia');
+
+$router->get('/docente/materia/estudiantes', 'UserController@estudiantes');
+

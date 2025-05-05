@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Subject;
+
 use App\Models\user;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -116,38 +118,35 @@ class UserController extends Controller
         ], 401);
     }
     
-    public function materias(Request $request)
-{
-    // Obtener el token desde el header Authorization: Bearer <token>
-    $token = $request->bearerToken();
+    public function materias(Request $request){
+        $token = $request->bearerToken();
 
-    if (!$token) {
-        return response()->json(['error' => 'Token no proporcionado'], 400);
+        if (!$token) {
+            return response()->json(['error' => 'Token no proporcionado'], 400);
+        }
+
+        try {
+            $decoded = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+
+            $subjets = DB::table('subjects')
+                ->where('user_id', $decoded->sub)
+                ->get();
+
+            return response()->json([
+                'message' => 'Token válido.',
+                'user_id' => $decoded->sub,
+                'user' => $decoded->user,
+                'materias' => $subjets 
+            ]);
+
+        } catch (\Firebase\JWT\ExpiredException $e) {
+            return response()->json(['error' => 'Token expirado'], 401);
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            return response()->json(['error' => 'Firma del token inválida'], 401);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Token inválido o malformado', 'details' => $e->getMessage()], 401);
+        }
     }
-
-    try {
-        // Decodificar el token usando la clave secreta y algoritmo HS256
-        $decoded = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
-
-        $subjets = DB::table('subjects')
-            ->where('user_id', $decoded->sub)
-            ->get();
-
-        return response()->json([
-            'message' => 'Token válido.',
-            'user_id' => $decoded->sub,
-            'user' => $decoded->user,
-            'materias' => $subjets 
-        ]);
-
-    } catch (\Firebase\JWT\ExpiredException $e) {
-        return response()->json(['error' => 'Token expirado'], 401);
-    } catch (\Firebase\JWT\SignatureInvalidException $e) {
-        return response()->json(['error' => 'Firma del token inválida'], 401);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Token inválido o malformado', 'details' => $e->getMessage()], 401);
-    }
-}
 
     public function materia(Request $request)
     {
@@ -166,18 +165,43 @@ class UserController extends Controller
             ->where('id',$request->subject_id)
             ->first();
 
-        return response()->json([
-            'message' => 'Token válido.',
-            'materia' => $subjet 
-        ]);
+            return response()->json([
+                'message' => 'Token válido.',
+                'materia' => $subjet 
+            ]);
 
-    } catch (\Firebase\JWT\ExpiredException $e) {
-        return response()->json(['error' => 'Token expirado'], 401);
-    } catch (\Firebase\JWT\SignatureInvalidException $e) {
-        return response()->json(['error' => 'Firma del token inválida'], 401);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Token inválido o malformado', 'details' => $e->getMessage()], 401);
+        } catch (\Firebase\JWT\ExpiredException $e) {
+            return response()->json(['error' => 'Token expirado'], 401);
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            return response()->json(['error' => 'Firma del token inválida'], 401);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Token inválido o malformado', 'details' => $e->getMessage()], 401);
+        }
     }
-}
+
+    public function estudiantes(Request $request){
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['error' => 'Token no proporcionado'], 400);
+        }
+
+        try {
+            $decoded = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+
+            $students = Subject::with('users')->find($request->subject_id);    
+            return response()->json([
+                'message' => 'Token válido.',
+                'estudiantes' => $students 
+            ]);
+
+        } catch (\Firebase\JWT\ExpiredException $e) {
+            return response()->json(['error' => 'Token expirado'], 401);
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            return response()->json(['error' => 'Firma del token inválida'], 401);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Token inválido o malformado', 'details' => $e->getMessage()], 401);
+        }
+    }
 
 }
