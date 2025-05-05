@@ -1,0 +1,29 @@
+digraph {
+	fontname=Arial fontsize=12 rankdir=TB size=8
+	node [color=lightgray fontname=Arial shape=box style=filled]
+	Direccion [label="Dirección del Departamento de Informática"]
+	Asistente [label="Asistente Administrativo"]
+	Direccion -> Asistente
+	CoordSoporte [label="Coordinador de Soporte Técnico"]
+	TecnicoSoporte [label="Técnico de Soporte"]
+	Direccion -> CoordSoporte
+	CoordSoporte -> TecnicoSoporte
+	CoordRedes [label="Coordinador de Redes"]
+	AdminRedes [label="Administrador de Redes"]
+	TecnicoRedes [label="Técnico de Redes y Soporte"]
+	Direccion -> CoordRedes
+	CoordRedes -> AdminRedes
+	CoordRedes -> TecnicoRedes
+	CoordDesarrollo [label="Coordinador de Desarrollo"]
+	AdminBD [label="Administrador de Base de Datos"]
+	DevSistemas [label="Desarrollador de Sistemas"]
+	Direccion -> CoordDesarrollo
+	CoordDesarrollo -> AdminBD
+	CoordDesarrollo -> DevSistemas
+	CoordEntrenamiento [label="Coordinador de Entrenamiento"]
+	Facilitador [label="Ingeniero Facilitador"]
+	AsistenteLab [label="Asistente de Laboratorio"]
+	Direccion -> CoordEntrenamiento
+	CoordEntrenamiento -> Facilitador
+	CoordEntrenamiento -> AsistenteLab
+}
