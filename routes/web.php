@@ -23,4 +23,4 @@ $router->get('/docente/materias', 'UserController@materias');
 $router->get('/docente/materia', 'UserController@materia');
 
 $router->get('/docente/materia/estudiantes', 'UserController@estudiantes');
-
+$router->get('/estudiantes/registro', 'UserController@registro');
