@@ -179,6 +179,76 @@ class UserController extends Controller
         }
     }
 
+    public function materiaEstudiante(Request $request) 
+    {
+        $token = $request->bearerToken();
+        $subject_id = $request->input('subject_id'); 
+
+        if (!$token) {
+            return response()->json(['error' => 'Token no proporcionado'], 400);
+        }
+
+        if (!$subject_id) {
+            return response()->json(['error' => 'ID de materia no proporcionado'], 400);
+        }
+
+        try {
+            $decoded = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+            $userId = $decoded->sub; 
+
+            $materia = DB::table('subjects_users')
+                ->join('subjects', 'subjects_users.subject_id', '=', 'subjects.id')
+                ->join('users', 'subjects.user_id', '=', 'users.id')
+                ->where('subjects_users.user_id', $userId) 
+                ->where('subjects.id', $subject_id) 
+                ->select(
+                    'subjects.id',
+                    'subjects.title',
+                    'subjects.name',
+                    'subjects.paralelo',
+                    'subjects_users.semestre',
+                    'users.id as docente_id',
+                    'users.name as docente_name',
+                    'users.lastname as docente_lastname'
+                )
+                ->first();
+
+            if (!$materia) {
+                return response()->json([
+                    'message' => 'Materia no encontrada o el estudiante no está registrado en esta materia.',
+                    'estudiante_id' => $userId,
+                    'subject_id_solicitado' => $subject_id,
+                ], 404);
+            }
+
+            $materiaFormateada = [
+                'id' => $materia->id,
+                'title' => $materia->title,
+                'name' => $materia->name,
+                'paralelo' => $materia->paralelo,
+                'semestre' => $materia->semestre,
+                'docente' => [
+                    'id' => $materia->docente_id,
+                    'name' => $materia->docente_name,
+                    'lastname' => $materia->docente_lastname,
+                ],
+            ];
+
+            return response()->json([
+                'message' => 'Materia del estudiante obtenida correctamente',
+                'estudiante_id' => $userId,
+                'materia' => $materiaFormateada,
+            ], 200);
+
+        } catch (\Firebase\JWT\ExpiredException $e) {
+            return response()->json(['error' => 'Token expirado'], 401);
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            return response()->json(['error' => 'Firma del token inválida'], 401);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Token inválido o malformado', 'details' => $e->getMessage()], 401);
+        }
+    }
+
     public function estudiantes(Request $request){
         $token = $request->bearerToken();
 
@@ -222,6 +292,7 @@ class UserController extends Controller
                 ->where('subjects_users.user_id', $userId) 
                 ->select(
                     'subjects.id',
+                    'subjects.title',
                     'subjects.name',
                     'subjects.paralelo',
                     'subjects_users.semestre',
@@ -234,6 +305,7 @@ class UserController extends Controller
             $materiasFormateadas = $materias->map(function ($materia) {
                 return [
                     'id' => $materia->id,
+                    'title' => $materia->title,
                     'name' => $materia->name,
                     'paralelo' => $materia->paralelo,
                     'semestre' => $materia->semestre,

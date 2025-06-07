@@ -14,6 +14,6 @@ $router->get('/materia', 'UserController@materia');//docente
 $router->get('/materia/estudiantes', 'UserController@estudiantes');//docente
 $router->get('/perfil', 'UserController@estudiante');//docente/materia/estudiante
 $router->get('/estudiantes-grupo', 'UserController@estudiantesSeleccion');//materia/estudianteSeleecion
-
+$router->get('/estudiantes/materia', 'UserController@materiaEstudiante');
 
 $router->get('/estudiantes/registro', 'UserController@registro');

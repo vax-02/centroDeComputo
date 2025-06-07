@@ -14,24 +14,28 @@ class subjectSeeder extends Seeder
     {
         DB::table("subjects")->insert([
             [
-            "name"=> "FIS 1100",
-            "paralelo" => "A",
-            "user_id" => 1,
+                "title"=>"FISICA I",
+                "name"=> "FIS 1100",
+                "paralelo" => "A",
+                "user_id" => 1,
             ],
             [
-            "name"=> "FIS 1100",
-            "paralelo" => "B",
-            "user_id" => 1,
+                "title"=>"FISICA I",
+                "name"=> "FIS 1100",
+                "paralelo" => "B",
+                "user_id" => 1,
             ],
             [
-                "name"=> "FIS 1102",
+                "title"=>"FISICA I",
+                "name"=> "FIS 1100",
                 "paralelo" => "C",
                 "user_id"=> 1,
             ],
             
             [
-                "name"=> "FIS 1200",
-                "paralelo" => "C",
+                "title"=>"FISICA I",
+                "name"=> "FIS 1100",
+                "paralelo" => "D",
                 "user_id"=> 1,
             ],
         ]);
