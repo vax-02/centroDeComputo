@@ -389,4 +389,25 @@ class UserController extends Controller
         }
     }
     
+    public function PublicSubjects()
+    {
+        try {
+            // Seleccionar solo los campos necesarios: id, title, name, paralelo
+            // Y filtrar por status activo si tus materias tienen un campo 'status'
+            $publicSubjects = DB::table('subjects')
+                                ->select('id', 'title', 'name', 'paralelo')
+                                // ->where('status', 1) // Descomenta si tienes un campo 'status' para materias públicas
+                                ->get();
+
+            // La clave 'materias' es la que espera tu frontend (Livewire)
+            return response()->json([
+                'materias' => $publicSubjects
+            ], 200);
+
+        } catch (\Exception $e) {
+            // Registrar el error para depuración
+            \Log::error('Error al obtener materias públicas: ' . $e->getMessage());
+            return response()->json(['error' => 'No se pudieron obtener las materias públicas.'], 500);
+        }
+    }
 }
