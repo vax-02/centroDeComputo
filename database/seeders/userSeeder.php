@@ -18,6 +18,7 @@ class userSeeder extends Seeder
         DB::table("users")->insert([[
             "name"=> "Nombre docente",
             "lastname" => "Apellido Docente",
+            "ci" => 7845782,
             "user" => "doc111",
             "password" => Hash::make( "doc111"),
             "rol" => 1, //docente
@@ -25,6 +26,7 @@ class userSeeder extends Seeder
         [
             "name"=> "alumno 1",
             "lastname" => "apellido 1",
+            "ci" => 7854632,
             "user" => "alu222",
             "password" => Hash::make( "alu222"),
             "rol"=> 2, //alumno
@@ -36,6 +38,7 @@ class userSeeder extends Seeder
             User::create([
                 'name' => substr( $faker->name , 0 , 25),
                 'lastname' => substr( $faker->lastName(),0,25),
+                'ci' => $faker->unique()->numerify('#######'),
                 'user' => $faker->unique()->userName(),
                 'password' => Hash::make( $faker->userName()),
                 "rol" => 2

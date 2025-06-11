@@ -117,7 +117,38 @@ class UserController extends Controller
             'error' => 'Credenciales inválidas'
         ], 401);
     }
-    
+    public function verificar(Request $request){
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['error' => 'Token no proporcionado'], 400);
+        }
+
+        try {
+            $decoded = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+
+            $user = User::find($request->user_id);
+            $status = false;
+            if($user){
+                if (Hash::check($request->password, $user->password)) {
+                    $status = true;
+                }
+            }
+            return response()->json([
+                'message' => 'Token válido.',
+                'id' => $decoded->sub,
+                'validate' => $status,
+            ]); 
+
+
+        } catch (\Firebase\JWT\ExpiredException $e) {
+            return response()->json(['error' => 'Token expirado'], 401);
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            return response()->json(['error' => 'Firma del token inválida'], 401);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Token inválido o malformado', 'details' => $e->getMessage()], 401);
+        }
+    }
     public function materias(Request $request){
         $token = $request->bearerToken();
 
